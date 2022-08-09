@@ -12,7 +12,8 @@ const {MONGODB} = require('./config.js')
 //set up Apollo server instance. Takes the typeDef 
 const server = new ApolloServer({
     typeDefs,
-    resolvers
+    resolvers,
+    context: ({req}) => ({req})
 });
 //to avoid deprec warnings
 mongoose.connect(MONGODB, {useNewUrlParser: true})

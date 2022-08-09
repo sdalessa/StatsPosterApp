@@ -36,4 +36,9 @@ module.exports.validateLoginInput = (username, password) => {
     if(password.trim() === '') {
         errors.password = 'Password field must not be empty';
     }
+
+    return {
+        errors, 
+        valid: Object.keys(errors).length < 1
+    }
 }

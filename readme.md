@@ -16,4 +16,20 @@ Before the CRUD operations for posts, we want to create ways for USERS TO AUTHEN
 14. Implemented code to throw error in case username has already been taken/used
 15. REQUIRED IMPROVEMENT: The system should not allow to register an empty user or similar condition. Creating the UTIL folder, with the validators.js file. Inside I create a function that takes as parameters all those required fields in the user definition (username, password and confirm pwd and email). In the function body, I create an error variable, that checks if email and pwd fields are empty, returning corresp errors. 
 16. Completed work on validators.js, including a regEx to check the valid form of email addresses. Now in the testing environment, we see the respective error messages for empty user name, malformed email, or non matching psw.
-17. implementing the login functionality now. Creating a validator for login data as well, with an empty errors object.
+17. implementing the login functionality now. Creating a validator for login data as well, with an empty errors object. The function takes the parameters of user and pwd. This will also be imported into the users imports, and also defined in our Typedefs. Lets go!
+18. done with authentication! Now we are able to: recognize wrong credential, or validate them instead, and provide a login token in response. 
+19. Just tried out a POST req from postman, where I click on the "body" and select "raw" and JSON from the dropdown. Then I enter this query:
+{
+    "query": "mutation{login(username:\"Michael\",password:\"4321\"){id username token} }"
+}
+20. Going into the type definitions now, to create 3 more queries and mutations. So far we have the RegisterInput, which allows to record new users, which into Atlas should result in the creation of record inside the "users" side of the db. Must be noted that this system is already hiding the password from view, when we look at the newly created users inside MongoAtlas, we can see that the pwd is scripted. This is the result of the combination of bcrypt and jsonwebtoken (which does specifically the encoding of a token) 
+
+21. Working on the create post resolvers. User logs in and gets an auth token. Then they need to put it in an auth header, and send it with a req, and we need to get the token and make sure that its auth, then it will be possible to create a post.  
+
+22. Just ran the following test via UI in GraphQL: I first requested to login a user. This is under the Mutation {square brackets}. Inside you then declare a user and pwd. The point is that once the user is logged in, they will have this token generated and provided. This can be then used for the next text: in order to post, you have to be able to validate your status of auth user via this token. So we do a mutation called {createPost} which needs to receive a body and give us back an id, body, username and createdAt pertaining to the post event. Crazy! 
+We are no longer creating a post from Atlas, but we are creating the post as authenticated users, via a token that enables the post to be recorded onto the db.
+
+23. WE WANT TO SORT RESULTS, so that the latest posts are displayed first. 
+24. Implement delete post. The setup is now so that only the user who has posted that particular post can delete it. This via the token that is provided upon login. If you provide the Id of a post that you did not write, even if your login auth token is correct, you will not be allowed to delete it. 
+
+25. FINISHING UP SERVER SIDE: submitting comments and likes. I would like to make these endorsements. Added comments in typedefs. Double exclamation means the array must include at least 1 element. Just one exlc accepts an empty array. Added the type "Like" and now adding the 'createComment'. In the deleteComment, providing the postId enables to check whether that post still exists or not when we want to delete it. The likePost will be possible to unlike back, like on fb. So it will function as a toggle. 
