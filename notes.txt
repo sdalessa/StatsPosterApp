@@ -1,0 +1,48 @@
+1. npm init, created index and gitignore, then done git init.
+2. npm install apollo-server graphql mongoose
+3. for each query, there is a corresponding resolver ,which processes some logic and gives a return for the query. Grouping Queries and mutations under respective objects. With sayHi and Hello World we have tested the query/response directly at local host 5001, because Graph QL provides an interface to do that directly there.
+4. created a config file where I store the string/connection with user and psw securely, and this file is also listed in the gitignore file (best practice)
+5. create database MODULES: new Schemas for Users and Posts (that are going to be on the socials!) created in the modules folder. By adding the 'users' to the schema we want to create a relation of the particular users by whom a particular post has been created (see that there is the value dot notation also points to an ObjectId). 
+6. Creating a query for fetching all the posts from the db. We are gonna do that below with the getPosts, which will get all the posts from our db, will go to the collection posts, bring all docs from there and return them back to the user. 
+7. Before step 6 though, we are going to create some data into the database. So we go into Atlas and go to the cluster, and then COLLECTIONS, and then create DB with own data. Created the first document there, and now I can fetch it.
+8. Okay, written the fetching function as async in the index file. Exciting experience. Went to test if we are able to get the record that we created from the db through the UI in the localhost (that graphQL provides), and we are getting an empty array as a result. SOLUTION: we had to now specify inside the string that is used in the config.js file the NAME OF THE DATABASE as we defined it through Atlas. This part goes before the question mark! Very exciting!
+9. After realizing that a mistake in the syntax in the record I created in atlas was throwing an error when fetching, everything now seems to be working in GraphQL.
+10. WANTED IMPROVEMENTS: typDefs and resolvers are in the index. We are going to move them from there. 
+11. Before the CRUD operations for posts, we want to create ways for USERS TO AUTHENTICATE so that the auth users only can do CRUDs. This we can do by working on the typeDefs, with the type/obj Mutation (called like that because this is making changes to our database, we need to take input from our users as arguments for that). This type of object is connected to the input called RegisterInput, because eventually mutation wants to return a User, which is either newly registering, or is providing signin credentials. 
+12. TODO IN THE NEXT NOTES: 
+-- validate user data: make sure to have server validation in case pwd not matching, email does not exist etc. unique username, 
+-- create auth token / new packages installed: npm install bcryptjs jsonwebtoken. in users.js we destructure registerInput
+13. TESTED AND WORKS! Just created a users collection in the atlas database! Basically (after having written all that code in users, for the users registration, and stored in the config.js the secret key) you compile the object inside of GraphQL UI and then you run it, it assigns to the user a unique token number! And then the users folder is created into mongo atlas. Exciting! We are registering users! Need to make sure the user name is unique too!
+14. Implemented code to throw error in case username has already been taken/used
+15. REQUIRED IMPROVEMENT: The system should not allow to register an empty user or similar condition. Creating the UTIL folder, with the validators.js file. Inside I create a function that takes as parameters all those required fields in the user definition (username, password and confirm pwd and email). In the function body, I create an error variable, that checks if email and pwd fields are empty, returning corresp errors. 
+16. Completed work on validators.js, including a regEx to check the valid form of email addresses. Now in the testing environment, we see the respective error messages for empty user name, malformed email, or non matching psw.
+17. implementing the login functionality now. Creating a validator for login data as well, with an empty errors object. The function takes the parameters of user and pwd. This will also be imported into the users imports, and also defined in our Typedefs. Lets go!
+18. done with authentication! Now we are able to: recognize wrong credential, or validate them instead, and provide a login token in response. 
+19. Just tried out a POST req from postman, where I click on the "body" and select "raw" and JSON from the dropdown. Then I enter this query:
+{
+    "query": "mutation{login(username:\"Michael\",password:\"4321\"){id username token} }"
+}
+20. Going into the type definitions now, to create 3 more queries and mutations. So far we have the RegisterInput, which allows to record new users, which into Atlas should result in the creation of record inside the "users" side of the db. Must be noted that this system is already hiding the password from view, when we look at the newly created users inside MongoAtlas, we can see that the pwd is scripted. This is the result of the combination of bcrypt and jsonwebtoken (which does specifically the encoding of a token) 
+
+21. Working on the create post resolvers. User logs in and gets an auth token. Then they need to put it in an auth header, and send it with a req, and we need to get the token and make sure that its auth, then it will be possible to create a post.  
+
+22. Just ran the following test via UI in GraphQL: I first requested to login a user. This is under the Mutation {square brackets}. Inside you then declare a user and pwd. The point is that once the user is logged in, they will have this token generated and provided. This can be then used for the next text: in order to post, you have to be able to validate your status of auth user via this token. So we do a mutation called {createPost} which needs to receive a body and give us back an id, body, username and createdAt pertaining to the post event. Crazy! 
+We are no longer creating a post from Atlas, but we are creating the post as authenticated users, via a token that enables the post to be recorded onto the db.
+
+23. WE WANT TO SORT RESULTS, so that the latest posts are displayed first. 
+24. Implement delete post. The setup is now so that only the user who has posted that particular post can delete it. This via the token that is provided upon login. If you provide the Id of a post that you did not write, even if your login auth token is correct, you will not be allowed to delete it. 
+
+25. FINISHING UP SERVER SIDE: submitting comments and likes. I would like to make these endorsements. Added comments in typedefs. Double exclamation means the array must include at least 1 element. Just one exlc accepts an empty array. Added the type "Like" and now adding the 'createComment'. In the deleteComment, providing the postId enables to check whether that post still exists or not when we want to delete it. The likePost will be possible to unlike back, like on fb. So it will function as a toggle. 
+
+26. So also in this case the routine is: created a file for comments in which we add the Mutation key and work on it (we export this into index where we require it in with a const and add with spread operator below) in comments.js we require the Post.js file that offers the schema. 
+
+27. Back working in comments.js into the Mutation 'createComments' which is async function , which takes the 'parent' in the form of an underscore, and we destructure the postId and body, and we need the context, which means making sure in advance that the user has actually logged in. 
+
+28. mongoose turns our data models into json objects, so we can access the comments array with dot not. We want to add the newest comment to the top, via the unshift method. 
+
+29. new test on GraphQL to run. Doing login anew (Tokens have a 1 hr expiration by the way), then going to getPosts (which is of type Query), and below in the same view we can add a mutation type comment subtype
+
+30. I can perhaps replace comments with 'stats', which is the main point of a statsPoster App! In this model, stats is an array that does as well include the fields username, and createdAt, but also includes stats. Stats will be POINTS, typeOf game (there are 2 type short and long, respecively up to 11 pts or 21 pts), rebounds, steals, turnovers, assists, 3pointers made/attempted fg made/attempted. The comment needs to 'mention' another user! So this as well must be in the schema, like calledUser(player whose stats are being posted) or something. 
+//problem: user may want to only record some stats, and not fill out all fields. Thats fine! I need a strategy so that I can record the total amount of posts that generated that particulars stats (similar to looking at the amount of people that reviewed an item on amazon) Like a specific counter for each submittable stats.
+
+31. CREATING MY FIRST DEDICATED CODE: created stats array as part of Post model, now working on typeDefs, because there should be a query to find player (who is being mentioned for th stats) in the users collection. PLEASE NOTE, stats are at this time inside of Post, they are a part of a post. Means they can be commented, means we need to decide if the comments needs to allow also posting stats in them. 
