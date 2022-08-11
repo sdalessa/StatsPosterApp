@@ -8,6 +8,7 @@ const {
 const { SECRET_KEY } = require("../../config");
 const User = require("../../models/User");
 
+//generates initial token for new registered user
 function generateToken(user) {
   return jwt.sign(
     {
@@ -47,11 +48,12 @@ module.exports = {
         token,
       };
     },
+//////// REGISTERING NEW USER
     async register(
       _,
       { registerInput: { username, email, password, confirmPassword } }
     ) {
-      //validate user data
+//validate user data
       const { valid, errors } = validateRegisterInput(
         username,
         email,
@@ -61,7 +63,7 @@ module.exports = {
       if (!valid) {
         throw new UserInputError("Errors", { errors });
       }
-      //making sure username is unique, and throwing error if already exists
+//making sure username is unique, and throwing error if already exists
       const user = await User.findOne({ username });
       if (user) {
         throw new UserInputError("Username is taken", {

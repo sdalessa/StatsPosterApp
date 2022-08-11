@@ -6,6 +6,8 @@ const typeDefs = require('./graphql/typeDefs')
 const resolvers = require('./graphql/resolvers')
 //note 4
 //note 6
+
+//mongoDB connection string
 const {MONGODB} = require('./config.js') 
 
 

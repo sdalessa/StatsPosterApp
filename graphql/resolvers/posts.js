@@ -42,7 +42,7 @@ module.exports = {
     },
     async deletePost(_, { postId }, context) {
       const user = checkAuth(context);
-      //need to make sure the creator of the user is the one auth to delete it
+      //need to make sure the creator of the post is the one auth to delete it
       try {
         const post = await Post.findById(postId);
         if (user.username === post.username) {
