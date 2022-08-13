@@ -22,6 +22,8 @@
 {
     "query": "mutation{login(username:\"Michael\",password:\"4321\"){id username token} }"
 }
+DONE WITH LOGIN AND AUTH
+
 20. Going into the type definitions now, to create 3 more queries and mutations. So far we have the RegisterInput, which allows to record new users, which into Atlas should result in the creation of record inside the "users" side of the db. Must be noted that this system is already hiding the password from view, when we look at the newly created users inside MongoAtlas, we can see that the pwd is scripted. This is the result of the combination of bcrypt and jsonwebtoken (which does specifically the encoding of a token) 
 
 21. Working on the create post resolvers. User logs in and gets an auth token. Then they need to put it in an auth header, and send it with a req, and we need to get the token and make sure that its auth, then it will be possible to create a post.  
@@ -46,3 +48,5 @@ We are no longer creating a post from Atlas, but we are creating the post as aut
 //problem: user may want to only record some stats, and not fill out all fields. Thats fine! I need a strategy so that I can record the total amount of posts that generated that particulars stats (similar to looking at the amount of people that reviewed an item on amazon) Like a specific counter for each submittable stats.
 
 31. CREATING MY FIRST DEDICATED CODE: created stats array as part of Post model, now working on typeDefs, because there should be a query to find player (who is being mentioned for th stats) in the users collection. PLEASE NOTE, stats are at this time inside of Post, they are a part of a post. Means they can be commented, means we need to decide if the comments needs to allow also posting stats in them. 
+
+32. I am unable, when I pull all the posts with getPosts (with final s) to also pull all the comments along in each post. This I dont think has to do with IDs, because each post is an obj that includes an array of comments in them. 

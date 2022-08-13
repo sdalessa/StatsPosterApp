@@ -41,7 +41,7 @@ module.exports = {
       }
       //if the password is correct, we issue a token
       const token = generateToken(user);
-
+      
       return {
         ...user._doc,
         id: user._id,
