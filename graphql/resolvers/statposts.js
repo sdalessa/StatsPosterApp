@@ -7,7 +7,7 @@ module.exports = {
   Query: {
     async getStats() {
       try {
-        const stats = await Stats.find().sort({ createdAt: -1 }); //sorting latest post first
+        const stats = await Stats.find();
         return stats;
       } catch (err) {
         throw new Error(err);
@@ -15,9 +15,9 @@ module.exports = {
     },
     async getSingleStats(_, { statsId }) {
       try {
-        const stats = await Stats.findById(statsId);//if the Id exists , return it... else...
-        if (stats) {
-          return stats;
+        const singlestats = await Stats.findById(statsId);
+        if (singlestats) {
+          return singlestats;
         } else {
           throw new Error("Stats not found");
         }
@@ -26,19 +26,21 @@ module.exports = {
       }
     },
   },
-  Mutation: {
-    async createStats(_, { body }, context) { //Here!! I dont know what goes there to replace "body!!"
-      const user = checkAuth(context);
-
-      const newStats = new Stats({
-        body,  //Here!! I dont know what goes there to replace "body!!"
-        user: user.id,
-        username: user.username,
-        createdAt: new Date().toISOString(),
-      });
-      const stats = await newStats.save();
-
-      return stats;
-    },
-
 };
+
+//   Mutation: {
+//     async createStats(_, { body }, context) { //Here!! I dont know what goes there to replace "body!!"
+//       const user = checkAuth(context);
+
+//       const newStats = new Stats({
+//         body,  //Here!! I dont know what goes there to replace "body!!"
+//         user: user.id,
+//         username: user.username,
+//         createdAt: new Date().toISOString(),
+//       });
+//       const stats = await newStats.save();
+
+//       return stats;
+//     },
+
+// };

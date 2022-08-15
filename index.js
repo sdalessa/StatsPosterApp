@@ -1,16 +1,15 @@
 const {ApolloServer} = require('apollo-server');
 //below one of the dependencies of ApolloServer
-// const gql = require('graphql-tag');
+//const gql = require('graphql-tag');
 const mongoose = require('mongoose');
 const typeDefs = require('./graphql/typeDefs')
 const resolvers = require('./graphql/resolvers')
 //note 4
 //note 6
-
+const Stats = require('./models/Stats')
 //mongoDB connection string
 const {MONGODB} = require('./config.js') 
-
-
+ 
 //set up Apollo server instance. Takes the typeDef 
 const server = new ApolloServer({
     typeDefs,

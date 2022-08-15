@@ -9,6 +9,14 @@ module.exports = gql`
     comments: [Comment]!
     likes: [Like]!
   }
+  type Stats {
+    id: ID!
+    createdAt: String!
+    username: String!
+    # body: String!
+    body: [StatsPost]!
+    # likes: [Like]!
+  }
   type Comment {
     id: ID!
     createdAt: String!
@@ -34,13 +42,7 @@ module.exports = gql`
     email: String!
   }
   type StatsPost {
-    id: ID!
-    createdAt: String!
-    username: String!
-    body: [Stats]!
-    likes: [Like]!
-  }
-  type Stats {
+  statsId: ID!
   username: String!
   gameType: Int! #// Or boolean to mean either the short or the long game (11 pts total or 21pts total)
   points: Int! 
@@ -52,10 +54,12 @@ module.exports = gql`
   turnovers: Int!
   steals: Int!
   }
+
   type Query {
     getPosts: [Post]
+    getStats: [Stats]
     getPost(postId: ID!): Post
-    getStats(statsId: ID!): StatsPost
+    getSingleStats(statsId: ID!): Stats
     # getUser(username: String!): User  # <-
   }
   type Mutation {
@@ -66,9 +70,9 @@ module.exports = gql`
     createComment(postId: String!, body: String!): Post!
     deleteComment(postId: ID!, commentId: ID!): Post!
     likePost(postId: ID!): Post!
-    createStatsPost(array: String!):StatsPost!
+    #createStatsPost(array: String!):StatsPost!
     # line above giving me headache. Question is, what type does the createStatsPost take? I started by calling it Stats, but now I am going for array (or is it obj???)
-    createStats(stats: String!):StatsPost!
+    #createStats(stats: String!):StatsPost!
 
   }
 `;
